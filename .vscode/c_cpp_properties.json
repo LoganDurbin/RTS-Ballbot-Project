@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "name": "PlatformIO",
+      "includePath": [
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/src/include",
+        "${workspaceFolder}/.pio/libdeps/pico/**",
+        "C:/Users/logan/.platformio/packages/framework-arduino-mbed/**",
+        "C:/Users/logan/.platformio/packages/toolchain-gccarmnoneeabi/arm-none-eabi/include",
+        "C:/Users/logan/.platformio/packages/toolchain-gccarmnoneeabi/lib/gcc/arm-none-eabi/9.2.1/include"
+      ],
+      "defines": [
+        "ARDUINO=10819",
+        "ARDUINO_ARCH_RP2040",
+        "ARDUINO_RASPBERRY_PI_PICO",
+        "TARGET_RASPBERRY_PI_PICO",
+        "TARGET_RP2040",
+        "MBED_BUILD_PROFILE_RELEASE"
+      ],
+      "compilerPath": "C:/Users/logan/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "gcc-arm"
+    }
+  ],
+  "version": 4
+}
