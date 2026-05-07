@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/logan/Desktop/Code/Ballbot/RTS-Ballbot-Project/src",
+                "C:/Users/logan/Desktop/Code/RTS-Ballbot-Project/src",
                 "C:/Users/logan/.platformio/packages/framework-arduino-mbed/libraries/Wire",
-                "C:/Users/logan/Desktop/Code/Ballbot/RTS-Ballbot-Project/src/include",
+                "C:/Users/logan/Desktop/Code/RTS-Ballbot-Project/src/include",
                 "C:/Users/logan/.platformio/packages/framework-arduino-mbed/cores/arduino",
                 "C:/Users/logan/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated",
                 "C:/Users/logan/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated-avr-comp",
@@ -57,9 +57,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/logan/Desktop/Code/Ballbot/RTS-Ballbot-Project/src",
+                    "C:/Users/logan/Desktop/Code/RTS-Ballbot-Project/src",
                     "C:/Users/logan/.platformio/packages/framework-arduino-mbed/libraries/Wire",
-                    "C:/Users/logan/Desktop/Code/Ballbot/RTS-Ballbot-Project/src/include",
+                    "C:/Users/logan/Desktop/Code/RTS-Ballbot-Project/src/include",
                     "C:/Users/logan/.platformio/packages/framework-arduino-mbed/cores/arduino",
                     "C:/Users/logan/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated",
                     "C:/Users/logan/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated-avr-comp",
