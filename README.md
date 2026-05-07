@@ -1,4 +1,4 @@
-# RTS Ballbot
+# RTS Ballbot Project
 
 A self-balancing robot that stands on top of a sports ball using three omni-wheels arranged in a 120° pattern. The Raspberry Pi Pico reads orientation from an IMU, runs a PD control loop at 200 Hz, and drives the wheels to keep the robot upright.
 
