@@ -1,21 +1,33 @@
 #pragma once
 #include "config.h"
 
+extern float integral_pitch, integral_roll;
+
 struct WheelSpeeds
 {
   int a, b, c;
 };
 
 inline WheelSpeeds compute(float pitch, float roll,
-                    float pitch_rate, float roll_rate)
+                    float pitch_rate, float roll_rate, float dt)
 {
-  float vx = -(KP * pitch + KD * pitch_rate);
-  float vy = -(KP * roll + KD * roll_rate);
+
+  // Update integrals
+  integral_pitch += pitch * dt;
+  integral_roll += roll * dt;
+
+  // Clamp integrals to prevent windup
+  integral_pitch = constrain(integral_pitch, -10.0f, 10.0f);
+  integral_roll = constrain(integral_roll, -10.0f, 10.0f);
+
+  float vx = KP * pitch + KI * integral_pitch + KD * pitch_rate;
+  float vy = KP * roll + KI * integral_roll + KD * roll_rate;
 
   WheelSpeeds w;
-  w.a = (int)(vy);
-  w.b = (int)(-0.866f * vx - 0.5f * vy);
-  w.c = (int)(0.866f * vx - 0.5f * vy);
+  // A is aligned with the robot X axis; B/C are at ±120° around the X axis.
+  w.a = (int)(vx);
+  w.b = (int)(-0.5f * vx - 0.866f * vy);
+  w.c = (int)(-0.5f * vx + 0.866f * vy);
 
   // clamp
   w.a = constrain(w.a, -MAX_SPEED, MAX_SPEED);
