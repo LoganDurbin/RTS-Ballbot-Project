@@ -14,12 +14,13 @@
 #define MOTOR_C_IN2 5
 
 // --- Control Loop ---
-#define LOOP_HZ 200
+#define LOOP_HZ 100
 #define LOOP_US (1000000 / LOOP_HZ) // 5000 µs
 
 // --- PD Gains (tune these) ---
-#define KP 15.0f
-#define KD 0.5f
+#define KP 8.0f
+#define KD 5.0f
+#define KI 0.1f
 
 // --- Motor Output ---
 #define MAX_SPEED 255

@@ -16,9 +16,24 @@ unsigned long loop_start_us = 0;
 unsigned long last_elapsed_us = 0;
 unsigned long max_elapsed_us = 0;
 
-arduino::MbedI2C imu_wire(IMU_SDA_PIN, IMU_SCL_PIN);
+
 
 Motor motorA, motorB, motorC;
+
+void stop_all_motors()
+{
+  motor_set(motorA, 0);
+  motor_set(motorB, 0);
+  motor_set(motorC, 0);
+}
+
+bool is_upside_down(const IMUData &d)
+{
+  // The IMU is mounted inverted, and read() corrects the Z sign.
+  // For a right-side-up robot, corrected Z is near +1g.
+  // When the robot flips upside down, corrected Z falls near -1g.
+  return d.az < -0.8f;
+}
 
 void setup()
 {
@@ -37,6 +52,7 @@ void setup()
   motor_init(motorB, MOTOR_B_IN1, MOTOR_B_IN2);
   motor_init(motorC, MOTOR_C_IN1, MOTOR_C_IN2);
 
+  stop_all_motors();
   Serial.println("Ready.");
 }
 
@@ -46,15 +62,24 @@ void loop()
 
   timing_start();
 
-  IMUData d = lsm_get();
+  IMUData d = imu.read();
+
+
   float p, r;
   estimate_tilt(d, p, r);
 
-  WheelSpeeds w = compute(p, r, d.gx, d.gy);
+  if (is_upside_down(d))
+  {
+    stop_all_motors();
+  }
+  else
+  {
+    WheelSpeeds w = compute(p, r, d.gx, d.gy, dt);
 
-  motor_set(motorA, w.a);
-  motor_set(motorB, w.b);
-  motor_set(motorC, w.c);
+    motor_set(motorA, w.a);
+    motor_set(motorB, w.b);
+    motor_set(motorC, w.c);
+  }
 
   timing_end();
   timing_print_stats(); // comment out once tuning — adds latency
