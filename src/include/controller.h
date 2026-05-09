@@ -7,10 +7,11 @@ struct WheelSpeeds
 };
 
 inline WheelSpeeds compute(float pitch, float roll,
-                    float pitch_rate, float roll_rate)
+                    float pitch_rate, float roll_rate, 
+                    float pitch_integral, float roll_integral)
 {
-  float vx = -(KP * pitch + KD * pitch_rate);
-  float vy = -(KP * roll + KD * roll_rate);
+  float vx = -(KP * pitch + KD * pitch_rate + KI * pitch_integral);
+  float vy = -(KP * roll + KD * roll_rate + KI * roll_integral);
 
   WheelSpeeds w;
   w.a = (int)(vy);

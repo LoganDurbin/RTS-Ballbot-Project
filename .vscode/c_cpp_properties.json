@@ -10,6 +10,7 @@
             "includePath": [
                 "/home/s1ppycup/RTS-Ballbot-Project/src",
                 "/home/s1ppycup/.platformio/packages/framework-arduino-mbed/libraries/Wire",
+                "/home/s1ppycup/RTS-Ballbot-Project/.pio/libdeps/pico/littlefs",
                 "/home/s1ppycup/RTS-Ballbot-Project/src/include",
                 "/home/s1ppycup/.platformio/packages/framework-arduino-mbed/cores/arduino",
                 "/home/s1ppycup/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated",
@@ -59,6 +60,7 @@
                 "path": [
                     "/home/s1ppycup/RTS-Ballbot-Project/src",
                     "/home/s1ppycup/.platformio/packages/framework-arduino-mbed/libraries/Wire",
+                    "/home/s1ppycup/RTS-Ballbot-Project/.pio/libdeps/pico/littlefs",
                     "/home/s1ppycup/RTS-Ballbot-Project/src/include",
                     "/home/s1ppycup/.platformio/packages/framework-arduino-mbed/cores/arduino",
                     "/home/s1ppycup/.platformio/packages/framework-arduino-mbed/cores/arduino/api/deprecated",
