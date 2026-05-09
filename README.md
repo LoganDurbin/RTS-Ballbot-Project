@@ -1,18 +1,18 @@
 # RTS Ballbot Project
 
-A self-balancing robot that balances on top of a volleyball using three omni-wheels arranged in a 120° pattern. The Raspberry Pi Pico reads orientation from an LSM6DS3 IMU, runs a PD control loop at 200 Hz, and drives the wheels to keep the robot upright.
+A self-balancing robot that balances on top of a ball of choice using three omni-wheels arranged in a 120° pattern. The Raspberry Pi Pico reads orientation from an LSM6DS3 IMU, runs a PID control loop at 100 Hz, and drives the wheels to keep the robot upright.
 
 ---
 
 ## How It Works
 
-The robot uses a **complementary filter** to estimate tilt from an LSM6DS3 IMU (accelerometer + gyroscope). A **PD controller** converts pitch and roll error into wheel speed commands. The three omni-wheels are oriented 120° apart, so any combination of X/Y motion can be produced by mixing their speeds.
+The robot uses a **complementary filter** to estimate tilt from an LSM6DS3 IMU (accelerometer + gyroscope). A **PID controller** converts pitch and roll error into wheel speed commands. The three omni-wheels are oriented 120° apart, so any combination of X/Y motion can be produced by mixing their speeds.
 
 ```
-IMU → accel low-pass filter → complementary filter → PD controller → wheel mix → 3× DRV8871 drivers
+IMU → accel low-pass filter → complementary filter → PID controller → wheel mix → 3× DRV8871 drivers
 ```
 
-The control loop runs at **200 Hz** (5 ms period). Each iteration is timed and the loop busy-waits for the remainder of the period so timing stays deterministic regardless of computation time.
+The control loop runs at **100 Hz** (10 ms period). Each iteration is timed and the loop busy-waits for the remainder of the period so timing stays deterministic regardless of computation time.
 
 ---
 
@@ -53,7 +53,7 @@ include/
 ├── config.h              — all pin and tuning constants
 ├── imu.h                 — LSM6DS3 class: driver, filter, calibration
 ├── motors.h              — DRV8871 PWM abstraction
-├── controller.h          — PD controller + omni-wheel mixing
+├── controller.h          — PID controller + omni-wheel mixing
 └── timing.h              — fixed-rate loop timing + jitter diagnostics
 tests/
 └── test_mapping.cpp      — standalone host test for wheel speed math
@@ -114,8 +114,8 @@ All tunable constants live in `include/config.h`.
 |---|---|---|
 | `KP` | `8.0` | Proportional gain — higher = stiffer response |
 | `KD` | `5.0` | Derivative gain — higher = more damping |
-| `KI` | `0.0` | Integral gain — present in controller but disabled |
-| `LOOP_HZ` | `200` | Control loop rate |
+| `KI` | `0.5` | Integral gain — present in controller but disabled |
+| `LOOP_HZ` | `100` | Control loop rate |
 | `MAX_SPEED` | `80` | PWM ceiling (conservative — increase after stability confirmed) |
 | `DEADBAND` | `4` | PWM below which motors are forced off |
 | `INJECT_DELAY_MS` | `0` | Artificial loop delay for instability demonstration |
@@ -126,8 +126,6 @@ All tunable constants live in `include/config.h`.
 3. Once stable, raise `MAX_SPEED` gradually to allow stronger correction.
 4. Comment out `timing_print_stats()` in `main.cpp` once tuned — serial output adds latency.
 
-> **KI warning:** The integral term accumulates error over time. On an unstable system with no position feedback it causes windup and makes the robot harder to control. Keep `KI = 0.0f` unless you have a specific reason to enable it.
-
 ---
 
 ## Real-Time Demo
@@ -135,7 +133,7 @@ All tunable constants live in `include/config.h`.
 Set `INJECT_DELAY_MS` in `config.h` to demonstrate the effect of missed deadlines:
 
 ```cpp
-#define INJECT_DELAY_MS 20   // adds 20ms per loop — equivalent to missing 4 consecutive 5ms deadlines
+#define INJECT_DELAY_MS 20   // adds 20ms per loop
 ```
 
 Expected behavior:
@@ -143,19 +141,17 @@ Expected behavior:
 - **20ms injected** — controller works on stale data, oscillation increases, system destabilizes
 - **Remove delay** — stability recovers
 
-This is the core real-time systems demonstration: timing consistency matters more than raw speed.
-
 ---
 
 ## Serial Output
 
-While `timing_print_stats()` is active (uncomment in `main.cpp`):
+While `timing_print_stats()` is active:
 
 ```
 loop_us: 312  max_us: 418
 ```
 
-Shows current and worst-case loop execution time in microseconds. Budget per loop is **5000 µs** (200 Hz). Values well under that confirm the control logic fits comfortably in the timing window.
+Shows current and worst-case loop execution time in microseconds. Budget per loop is **5000 µs** (100 Hz). Values well under that confirm the control logic fits comfortably in the timing window.
 
 ---
 
@@ -169,11 +165,11 @@ B = -0.5·vx  - 0.866·vy
 C = -0.5·vx  + 0.866·vy
 ```
 
-Where `vx` and `vy` come from the PD controller output:
+Where `vx` and `vy` come from the PID controller output:
 
 ```
-vx = KP·pitch + KD·pitch_rate
-vy = KP·roll  + KD·roll_rate
+vx = KP·pitch + Ki·pitch_integral + KD·pitch_rate
+vy = KP·roll  + Ki·roll_integral + KD·roll_rate
 ```
 
 Verify the mapping without hardware:
@@ -187,4 +183,4 @@ g++ test_mapping.cpp -o test_mapping; if ($?) { ./test_mapping }
 
 ## Motor Test
 
-Uncomment `motor_test_sequence()` in the `loop()` function and comment out the PD logic to run each motor independently before enabling the full control loop. Each motor runs forward then reverse at PWM 150 for 1 second each.
+Uncomment `motor_test_sequence()` in the `loop()` function and comment out the PID logic to run each motor independently before enabling the full control loop. Each motor runs forward then reverse at PWM 150 for 1 second each.
